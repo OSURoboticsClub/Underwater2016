@@ -1,0 +1,11 @@
+{
+  "name": "osurc-arduino",
+  "version": "0.1.0",
+  "description": "Read temperature/pressure values from Arduino attachment.",
+  "main": "arduino.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "serialport": "^2.1.0"
+  }
+}

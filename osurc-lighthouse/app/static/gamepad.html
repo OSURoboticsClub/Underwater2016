@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>gamepad test</title>
+    <style>
+
+      #lpad, #rpad {
+        display: inline-block;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        min-width: 64px;
+        min-height: 64px;
+        width: 40%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+      }
+
+      #lpad {
+        left: 0;
+      }
+
+      #rpad {
+        right: 0;
+      }
+
+    </style>
+  </head>
+  <body>
+    <main></main>
+
+    <canvas id="lpad"></canvas>
+    <canvas id="rpad"></canvas>
+
+    <script src="hammer.min.js"></script>
+    <script src="hammer-time.min.js"></script>
+    <script>
+
+      'use strict'
+      /* global Hammer */
+
+      const main = document.getElementsByTagName('main')[0]
+      const lpad = document.getElementById('lpad')
+      const rpad = document.getElementById('rpad')
+
+      const mc = new Hammer.Manager(lpad, {
+        recognizers: [
+          [Hammer.Pan, { touchAction: 'auto' }]
+        ]
+      })
+
+      let x = null, sx, rx
+      let y = null, sy, ry
+
+      mc.on('pan', (e) => {
+
+        // console.log(e)
+        e.preventDefault()
+
+        if (x === null && y === null) {
+          sx = e.pointers[0].offsetX
+          sy = e.pointers[0].offsetY
+        }
+
+        x = Math.round(e.distance * Math.cos(e.angle / 180 * Math.PI))
+        y = Math.round(e.distance * Math.sin(e.angle / 180 * Math.PI))
+
+        rx = x / e.target.clientWidth; rx = rx > 1 ? 1 : rx; rx = rx < -1 ? -1 : rx
+        ry = y / e.target.clientHeight; ry = ry > 1 ? 1 : ry; ry = ry < -1 ? -1 : ry
+
+        if (e.isFinal) {
+          x = null
+          y = null
+          sx = null
+          sy = null
+          rx = null
+          ry = null
+        }
+
+
+        main.innerHTML = `
+<pre>
+  sx: ${sx}
+  sy: ${sy}
+  x: ${x}
+  y: ${y}
+  rx: ${rx}
+  ry: ${ry}
+</pre>
+        `
+
+        const w = lpad.width = e.target.clientWidth
+        const h = lpad.height = e.target.clientHeight
+        const ctx = lpad.getContext('2d')
+        ctx.clearRect(0, 0, w, h)
+
+        if (x || y) {
+          ctx.beginPath()
+          ctx.arc(sx, sy, 20, 0, 2 * Math.PI)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(sx, sy)
+          ctx.lineTo(sx + x, sy + y)
+          ctx.stroke()
+        }
+
+      })
+
+    </script>
+  </body>
+</html>

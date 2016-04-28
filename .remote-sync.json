@@ -1,0 +1,17 @@
+{
+  "uploadOnSave": true,
+  "deleteLocal": true,
+  "hostname": "tegra837",
+  "target": "Code/Underwater2016",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**",
+    "**/node_modules/**",
+    "osurc-lighthouse/**"
+  ],
+  "username": "ubuntu",
+  "transport": "scp",
+  "port": "22",
+  "useAtomicWrites": true,
+  "useAgent": true
+}

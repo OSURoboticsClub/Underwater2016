@@ -1,0 +1,8 @@
+{
+  "name": "osurc-discovery",
+  "version": "0.1.0",
+  "description": "Responds to multicast UDP queries for discovery.",
+  "main": "server.js",
+  "license": "UNLICENSED",
+  "private": true
+}

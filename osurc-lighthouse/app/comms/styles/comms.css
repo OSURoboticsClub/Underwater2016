@@ -1,0 +1,58 @@
+html, body {
+  height: 100%;
+}
+
+html, body, div, main, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+@font-face {
+  font-family: Raleway;
+  font-weight: 300;
+  src: url(../fonts/Raleway-Light.ttf);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Raleway;
+}
+
+.teal {
+  color: #003366;
+}
+
+.teal.active {
+  color: #66ffff;
+}
+
+.green {
+  color: #003300;
+}
+
+.green.active {
+  color: #99ff99;
+}
+
+.yellow {
+  color: #663300;
+}
+
+.yellow.active {
+  color: #ffff99;
+}
+
+.purple {
+  color: #660066;
+}
+
+.purple.active {
+  color: #ff99ff;
+}
+
+.status {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: #eee;
+  position: fixed;
+  bottom: 0;
+}

@@ -1,0 +1,13 @@
+{
+  "name": "osurc-debug",
+  "version": "0.1.0",
+  "description": "Temporary I2C driving code until we fix the python version.",
+  "main": "run.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "bluebird": "^3.3.5",
+    "clear": "0.0.1",
+    "i2c-bus": "^1.0.2"
+  }
+}
