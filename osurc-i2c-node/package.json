@@ -1,5 +1,5 @@
 {
-  "name": "osurc-debug",
+  "name": "osurc-i2c-node",
   "version": "0.1.0",
   "description": "Temporary I2C driving code until we fix the python version.",
   "main": "run.js",

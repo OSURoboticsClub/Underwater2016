@@ -1,0 +1,24 @@
+{
+  "apps": [
+    {
+      "name": "arduino",
+      "cwd": "osurc-arduino/",
+      "script": "server.js"
+    },
+    {
+      "name": "cameras",
+      "cwd": "osurc-cameras/",
+      "script": "server.js"
+    },
+    {
+      "name": "discovery",
+      "cwd": "osurc-discovery/",
+      "script": "server.js"
+    },
+    {
+      "name": "i2c",
+      "cwd": "osurc-i2c-node/",
+      "script": "server.js"
+    }
+  ]
+}

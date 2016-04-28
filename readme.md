@@ -10,8 +10,8 @@
 
 ## ROV Services
 
-- [x] [Query](docs/query.md) - network discovery service
+- [x] [Discovery](docs/discovery.md) - network discovery service
 - [x] [PM2 Web](docs/pm2_web.md) - running services
 - [x] [Cameras](docs/cameras.md) - streams each USB camera
 - [ ] [Sensors](docs/sensors.md) - temps, voltages, etc
-- [x] [Motors](docs/motors.md) - writes to I2C devices
+- [ ] [Motors](docs/motors.md) - reads/writes from/to I2C devices

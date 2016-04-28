@@ -1,7 +1,8 @@
 # @maccelerated
 # Node.js Style
 
-parser: "babel-eslint"
+root: true
+parser: babel-eslint
 ecmaVersion: 6
 env:
   node: true
