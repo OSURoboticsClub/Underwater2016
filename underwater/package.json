@@ -1,0 +1,12 @@
+{
+  "name": "underwater",
+  "version": "0.1.0",
+  "description": "Various services that run on the ROV itself.",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "bluebird": "^3.3.5",
+    "i2c-bus": "^1.0.2",
+    "mz": "^2.4.0"
+  }
+}

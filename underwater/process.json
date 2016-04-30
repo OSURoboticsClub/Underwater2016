@@ -1,0 +1,8 @@
+{
+  "apps": [
+    { "script": "arduino.js" },
+    { "script": "cameras.js" },
+    { "script": "discovery.js" },
+    { "script": "i2c-node.js" }
+  ]
+}
