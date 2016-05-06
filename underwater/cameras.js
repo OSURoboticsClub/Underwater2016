@@ -48,7 +48,7 @@ function start () {
       const env = process.env
       env.LD_LIBRARY_PATH = '~/Code/mjpg-streamer/mjpg-streamer-experimental/'
       const child = cp.spawn('mjpg_streamer', [
-        '-i', `input_uvc.so -d ${camera.device}`,
+        '-i', `input_uvc.so -d ${camera.device} -l off`,
         '-o', `output_http.so -p ${camera.port} -w ./www`
       ], {
         cwd: '/usr/local/lib/mjpg-streamer/',

@@ -33,7 +33,9 @@ const setThrottle = (bus, addr, throttle) => {
   buffer[0] = value >> 8 & 0xff
   buffer[1] = value & 0xff
   // send
-  return bus.writeI2cBlockAsync(addr, 0x00, 2, buffer)
+  return Promise.resolve()
+  .then(() => bus.writeByteAsync(addr, 0x00, buffer[0]))
+  .then(() => bus.writeByteAsync(addr, 0x01, buffer[1]))
   .catch((err) => { throw Error(`write 0x${addr.toString(16)}`) })
 }
 
@@ -73,9 +75,9 @@ function exit (code) {
 open(1)
 .then(bus1 => { bus = bus1 })
 .then(() => motors.map(addr => initializeESC(bus, addr))).all()
-.then(() => bus.writeByteAsync(0x40, 0x00, 0x10))
-.then(() => bus.writeByteAsync(0x40, 0xfe, 0x79))
-.then(() => bus.writeByteAsync(0x40, 0x00, 0x00))
+// .then(() => bus.writeByteAsync(0x40, 0x00, 0x10))
+// .then(() => bus.writeByteAsync(0x40, 0xfe, 0x79))
+// .then(() => bus.writeByteAsync(0x40, 0x00, 0x00))
 .then(() => {
 
   throttles[0x29] = 0
@@ -108,16 +110,18 @@ open(1)
       return setThrottle(bus, addr, drifting[addr])
 
     })).all()
+    /*
     .then(() => motors.map(addr => {
       readSensors(bus, addr)
       .then(values => { sensors[addr] = values })
     })).all()
+    */
     .then(() => {
       const time = Date.now() - started
       times.push(time)
       if (times.length > 5) { times.shift() }
     })
-    .then(() => setTimeout(loop, 50))
+    .then(() => setTimeout(loop, 100))
   }
 
   // start infinite loop
@@ -140,6 +144,7 @@ udp.on('json message', (remote, json) => {
     })
   }
 
+  /*
   if (json.servos) {
     Object.keys(json.servos).map(key => {
       // calculate address start
@@ -160,6 +165,7 @@ udp.on('json message', (remote, json) => {
       .then(() => bus.writeByteAsync(0x40, addr + 3, value >> 8 & 0x0f))
     })
   }
+  */
 
 })
 

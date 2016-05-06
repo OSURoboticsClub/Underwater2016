@@ -2,7 +2,8 @@
 import { BetterDgram } from '../../../../common/datagram'
 import { solve, compileFreebody, $V } from '../../common/linalg'
 
-// import controller from './controller'
+
+import controller from './controller'
 const service = new BetterDgram()
 
 const PORT = 33333
@@ -25,88 +26,68 @@ service.on('start stream', (address) => {
   if (endStream) { throw Error('stream already on') }
 
   let lastSent = 0
+  let claw = 1600
 
   /* eslint no-multi-spaces: 0 */
   /* eslint array-bracket-spacing: 0 */
 
   const thrusters = [
-    { addr: 0x29, placement: [ -1,  0,  0,  0,  1,  0 ] },
-    { addr: 0x2a, placement: [  1,  0,  0,  0, -1,  0 ] },
-    { addr: 0x2b, placement: [  2,  0,  0,  0,  0, -1 ] },
-    { addr: 0x2c, placement: [ -2,  0,  0,  0,  0, -1 ] }
+    { addr: '0x29', placement: [ -1,  0,  0,  0,  1,  0 ] },
+    { addr: '0x2a', placement: [  1,  0,  0,  0, -1,  0 ] },
+    { addr: '0x2b', placement: [  0, -2,  0,  0,  0, -1 ] },
+    { addr: '0x2c', placement: [  0,  2,  0,  0,  0, -1 ] }
   ]
 
   const M = compileFreebody(thrusters.map(t => t.placement))
+  const Yx = M.multiply($V([ 1,  1,  1,  1]))
+  const Ym = M.multiply($V([-1, -1, -1, -1]))
 
-  function onKeyboard (controls) {
-
-    const max = Math.pow(2, 15) - 1
-
-    let fy = 0
-    if (controls.forwards.pressed) { fy += max }
-    if (controls.backwards.pressed) { fy -= max }
-    let tz = 0
-    if (controls.right.pressed) { tz += max }
-    if (controls.left.pressed) { tz -= max }
-    let fz = 0
-    if (controls.up.pressed) { fz += max }
-    if (controls.down.pressed) { fz -= max }
-
-    const x = solve(M, $V([ 0, fy, fz, 0, 0, tz ])).x(0.1)
-
-    console.log(x)
-
-    const json = {
-      motors: {
-        // port forwards
-        '0x29': x.e(1),
-        // starboard forward
-        '0x2a': x.e(2),
-        // starboard upwards
-        '0x2b': x.e(3),
-        // port upwards
-        '0x2c': x.e(4)
-      }
+  const range = (yi) => {
+    const size = yi.dimensions().cols
+    const yf = []
+    for (let i = 0; i < size; i++) {
+      const n = i + 1
+      const v = yi.e(n)
+      yf.push(Math.abs(v) * (v >= 0 ? Yx.e(n) : Ym.e(n)))
     }
-
-    service.sendJson({ port: PORT, address }, json)
-
+    return $V(yf)
   }
 
-
-
-
-
-
-
-
-
-
-
   function onControl (control) {
-    if (Date.now() - lastSent >= 500) {
+
+    if (Date.now() - lastSent >= 100) {
+
       lastSent = Date.now()
-      const fy = control.pads.left.y
-      const tz = control.pads.right.x
-      const fz = control.pads.right.y
-      const x = solve(M, $V([ 0, fy, fz, 0, 0, tz ])).x(0.1)
 
-      console.log(x.e(1), x.e(2), x.e(3), x.e(4))
+      service.emit('control', control)
 
-      const json = {
-        motors: {
-          // port forwards
-          '0x29': 0,
-          // starboard forward
-          '0x2a': 0,
-          // starboard upwards
-          '0x2b': 0,
-          // port upwards
-          '0x2c': 0
-        }
-      }
+      const bit = 15
+      const ratio = v => v / (v > 0 ? (Math.pow(2, bit) - 1) : Math.pow(2, bit))
+
+      const tz = ratio(control.pads.left.x)
+      const fy = ratio(control.pads.left.y)
+      const tx = ratio(control.pads.right.x)
+      const fz = ratio(control.pads.right.y)
+
+      claw -= control.buttons.left.trigger / 2
+      claw += control.buttons.right.trigger / 2
+      if (claw < 1600) { claw = 1600 }
+      if (claw > 2300) { claw = 2300 }
+      claw = Math.round(claw)
+
+      const x = solve(M, $V([ 0, fy, fz, tx, 0, tz ]))
+      // const x = solve(M, range($V([ 0, fy, fz, tx, 0, tz ])))
+
+
+      const m = 0.3
+      service.emit('vectors', x.x(m))
+
+      const json = { motors: {}, servos: {} }
+      thrusters.forEach((t, i) => { json.motors[t.addr] = Math.round(x.x(m).e(i + 1) * 32767) })
+      json.servos['0'] = claw
+
       service.sendJson({ port: PORT, address }, json)
-      //console.log('sent', address, PORT, json.motors)
+      // console.log(json.motors)
     }
   }
 
@@ -121,17 +102,17 @@ service.on('start stream', (address) => {
   }
 
   endStream = () => {
-    // controller.removeListener('control', onControl)
-    // controller.removeListener('disconnect', onDisconnect)
-    // controller.removeListener('error', onError)
-    service.removeListener('keyboard', onKeyboard)
+    controller.removeListener('control', onControl)
+    controller.removeListener('disconnect', onDisconnect)
+    controller.removeListener('error', onError)
+    // service.removeListener('keyboard', onKeyboard)
     service.emit('streaming', false)
   }
 
-  // controller.on('error', onError)
-  // controller.on('disconnect', onDisconnect)
-  // controller.on('control', onControl)
-  service.on('keyboard', onKeyboard)
+  controller.on('error', onError)
+  controller.on('disconnect', onDisconnect)
+  controller.on('control', onControl)
+  // service.on('keyboard', onKeyboard)
   service.emit('streaming', true)
 
 })

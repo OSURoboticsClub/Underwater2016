@@ -56,3 +56,13 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   bottom: 0;
 }
+
+.values, .camera {
+  display: inline-block;
+}
+
+.camera img {
+  margin: 1em;
+  height: calc(1.2 * 480px);
+  width: calc(1.2 * 640px);
+}

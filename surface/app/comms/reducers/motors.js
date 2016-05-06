@@ -1,6 +1,8 @@
 import {
   LISTENING,
-  STREAMING
+  STREAMING,
+  CONTROL,
+  VECTORS
 } from '../actions/motors'
 
 const init = {
@@ -18,6 +20,14 @@ export default (state = init, { type, payload }) => {
 
     case STREAMING:
       state.streaming = payload
+      return state
+
+    case CONTROL:
+      state.control = payload
+      return state
+
+    case VECTORS:
+      state.vectors = payload
       return state
 
     default:

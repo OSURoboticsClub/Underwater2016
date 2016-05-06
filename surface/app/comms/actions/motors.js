@@ -4,6 +4,8 @@ export const LISTENING = 'motors.listening'
 export const START_STREAM = 'motors.stream.start'
 export const STOP_STREAM = 'motors.stream.stop'
 export const STREAMING = 'motors.streaming'
+export const CONTROL = 'motors.control'
+export const VECTORS = 'motors.vectors'
 
 export const startStream = (dispatch) => (address) => {
   // TODO auto wire motor service to controller
@@ -20,4 +22,6 @@ export const stopStream = (dispatch) => () => {
 export function bind (dispatch) {
   service.on('listening', () => dispatch({ type: LISTENING }))
   service.on('streaming', payload => dispatch({ type: STREAMING, payload }))
+  service.on('control', payload => dispatch({ type: CONTROL, payload }))
+  service.on('vectors', payload => dispatch({ type: VECTORS, payload }))
 }

@@ -7,15 +7,16 @@ export default {
   render ({ children, context, dispatch, path, props }) {
     const { controller } = context
     const { pending, connected, power, errors } = controller
+
     return (
-      <div>
+      <pre>
         <button onClick={restart(dispatch)}>restart</button>
         <button onClick={close(dispatch)}>close</button>
-        <p>listening: {String(pending)}</p>
-        <p>connected: {String(connected)}</p>
-        <p>power: {String(power)}</p>
-        <p>errors: {String(errors)}</p>
-      </div>
+        <div>listening: {String(pending)}</div>
+        <div>connected: {String(connected)}</div>
+        <div>power: {String(power)}</div>
+        <div>errors: {String(errors)}</div>
+      </pre>
     )
   }
 
